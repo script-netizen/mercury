@@ -1,0 +1,87 @@
+-- ┌────────────────────────────────────────────────────────────┐
+-- │  1.  Load the DrRay UI Library                             │
+-- └────────────────────────────────────────────────────────────┘
+local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
+
+-- ┌────────────────────────────────────────────────────────────┐
+-- │  2.  Create the main window                                │
+-- └────────────────────────────────────────────────────────────┘
+local window = DrRayLibrary:Load("Crossovers", "Default")
+
+-- ┌────────────────────────────────────────────────────────────┐
+-- │  3.  Add a tab called “Main”                               │
+-- └────────────────────────────────────────────────────────────┘
+local tab = window.newTab("Main", "")
+
+-- ┌────────────────────────────────────────────────────────────┐
+-- │  4.  Helper functions                                      │
+-- └────────────────────────────────────────────────────────────┘
+local player = game.Players.LocalPlayer
+local backpack = player:WaitForChild("Backpack")
+
+local function moveToolsToFolder()
+    -- Create / clear the Original folder
+    local original = backpack:FindFirstChild("Original")
+    if original then original:ClearAllChildren() else
+        original = Instance.new("Folder")
+        original.Name = "Original"
+        original.Parent = backpack
+    end
+
+    -- Move every tool into Original
+    for _, tool in ipairs(backpack:GetChildren()) do
+        if tool:IsA("Tool") then
+            tool.Parent = original
+        end
+    end
+end
+
+local function cloneToolsBack()
+    local original = backpack:FindFirstChild("Original")
+    if not original then return end
+
+    -- Clone each tool and put the copy in the backpack
+    for _, tool in ipairs(original:GetChildren()) do
+        if tool:IsA("Tool") then
+            local clone = tool:Clone()
+            clone.Parent = backpack
+        end
+    end
+end
+
+local function restoreOriginalTools()
+    local original = backpack:FindFirstChild("Original")
+    if not original then return end
+
+    -- Move originals back to backpack
+    for _, tool in ipairs(original:GetChildren()) do
+        tool.Parent = backpack
+    end
+
+    -- Delete the folder
+    original:Destroy()
+end
+
+local function removeClones()
+    -- Remove any tools that are *not* inside Original
+    for _, tool in ipairs(backpack:GetChildren()) do
+        if tool:IsA("Tool") and tool.Parent.Name ~= "Original" then
+            tool:Destroy()
+        end
+    end
+end
+
+-- ┌────────────────────────────────────────────────────────────┐
+-- │  5.  Add the toggle                                        │
+-- └────────────────────────────────────────────────────────────┘
+tab.newToggle("Tool Replace", "Clone tools while preserving originals", false, function(state)
+    if state then
+        -- ON:  move originals → clone → put clones in backpack
+        moveToolsToFolder()
+        cloneToolsBack()
+    else
+        -- OFF: delete clones → move originals back → delete folder
+        removeClones()
+        restoreOriginalTools()
+    end
+end)
