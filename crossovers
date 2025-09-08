@@ -44,6 +44,6 @@ end
 -- ┌────────────────────────────────────────────────────────────┐
 -- │  5.  Add the button                                        │
 -- └────────────────────────────────────────────────────────────┘
-tab.newButton("NoCD", "Copy tools → delete originals → paste copies", function()
+tab.newButton("NoCD", "NOCD", function()
     noCD()
 end)
