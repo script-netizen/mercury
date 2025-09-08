@@ -11,7 +11,7 @@ local window = DrRayLibrary:Load("Crossovers", "Default")
 -- ┌────────────────────────────────────────────────────────────┐
 -- │  3.  Add a tab called “Main”                               │
 -- └────────────────────────────────────────────────────────────┘
-local tab = window.newTab("Main", "")
+local tab = DrRayLibrary.newTab("Main", "")
 
 -- ┌────────────────────────────────────────────────────────────┐
 -- │  4.  Helper functions                                      │
