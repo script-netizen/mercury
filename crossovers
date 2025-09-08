@@ -14,36 +14,28 @@ local window = DrRayLibrary:Load("Crossovers", "Default")
 local tab = DrRayLibrary.newTab("Main", "")
 
 -- ┌────────────────────────────────────────────────────────────┐
--- │  4.  Helper functions                                      │
+-- │  4.  Add the button with exact requested behaviour         │
 -- └────────────────────────────────────────────────────────────┘
-local player = game.Players.LocalPlayer
-local backpack = player:WaitForChild("Backpack")
-
-local function noCD()
-    -- 1. Copy every tool currently in the backpack
-    local copies = {}
+tab.newButton("NoCD", "NoCD", function()
+    local backpack = game.Players.LocalPlayer:WaitForChild("Backpack")
+    local tools = {}
     for _, tool in ipairs(backpack:GetChildren()) do
         if tool:IsA("Tool") then
-            table.insert(copies, tool:Clone())
+            table.insert(tools, tool:Clone())
         end
     end
 
-    -- 2. Delete all original tools
+    task.wait(0.1)
+
     for _, tool in ipairs(backpack:GetChildren()) do
         if tool:IsA("Tool") then
             tool:Destroy()
         end
     end
 
-    -- 3. Paste the copies back into the backpack
-    for _, clone in ipairs(copies) do
-        clone.Parent = backpack
-    end
-end
+    task.wait(0.1)
 
--- ┌────────────────────────────────────────────────────────────┐
--- │  5.  Add the button                                        │
--- └────────────────────────────────────────────────────────────┘
-tab.newButton("NoCD", "NOCD", function()
-    noCD()
+    for _, tool in ipairs(tools) do
+        tool.Parent = backpack
+    end
 end)
